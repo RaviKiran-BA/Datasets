@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Submit Form to Google Sheets</title>
+    <style>
+        /* Basic Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #ffffff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: white;
+        }
+
+        button[type="reset"] {
+            background-color: #dc3545;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <form id="contactForm">
+            <h3>Contact Form</h3>
+            <input type="text" placeholder="Type Your Name Here" id="name" required>
+            <input type="email" placeholder="Type Your Email Here" id="email" required>
+            <input type="text" placeholder="Type Your Number Here" id="mobile" required>
+            <select id="degree" required>
+                <option value="">Select an option</option>
+                <option value="BCA">BCA</option>
+                <option value="BSC IT">BSC IT</option>
+                <option value="BTech CS">BTech CS</option>
+                <option value="BSC CS">BSC CS</option>
+            </select>
+            <textarea rows="4" placeholder="How we can help??" id="message" required></textarea>
+            <label><b>Gender</b></label><br>
+            <label><input type="radio" name="gender" value="Male" required> Male</label><br>
+            <label><input type="radio" name="gender" value="Female" required> Female</label><br>
+            <button type="submit">Send</button>
+            <button type="reset">Reset</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById("contactForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Collect form data
+            const formData = {
+                name: document.getElementById("name").value,
+                email: document.getElementById("email").value,
+                mobile: document.getElementById("mobile").value,
+                degree: document.getElementById("degree").value,
+                message: document.getElementById("message").value,
+                gender: document.querySelector('input[name="gender"]:checked').value
+            };
+
+            // Send data to Google Apps Script
+            fetch("https://script.google.com/macros/s/AKfycbz9PJbMWCTIlNC_6hEOYXnlfSvvnHgb5OJR_uQVMDesoPxq7K-RVQp6N8bqVXxRESBeqA/exec", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        alert("Form submitted successfully!");
+                        document.getElementById("contactForm").reset();
+                    } else {
+                        alert("Error: " + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred while submitting the form.");
+                });
+        });
+    </script>
+</body>
+</html>
